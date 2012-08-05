@@ -48,14 +48,7 @@ func (t *Trans2) Eval(x, y float32) (u, v float32) {
 // Calculate scaling factors using old and new image dimensions.
 func calcFactors(w, h int, wo, ho float32) (sx, sy float32) {
 	if w <= 0 {
-		w = -1
-	}
-	if h <= 0 {
-		h = -1
-	}
-
-	if w == -1 {
-		if h == -1 {
+		if h <= 0 {
 			sx = 1.0
 			sy = 1.0
 		} else {
@@ -64,7 +57,7 @@ func calcFactors(w, h int, wo, ho float32) (sx, sy float32) {
 		}
 	} else {
 		sx = wo / float32(w)
-		if h == -1 {
+		if h <= 0 {
 			sy = sx
 		} else {
 			sy = ho / float32(h)
@@ -104,7 +97,7 @@ func Resize(w int, h int, img image.Image, interp InterpolationFunction) image.I
 				}
 			}
 			c <- 1
-		}(image.Rect(b.Min.X, b.Min.Y+i*(b.Dy())/4, b.Max.X, b.Min.Y+(i+1)*(b.Dy())/4), c)
+		}(image.Rect(b.Min.X, b.Min.Y+i*(b.Dy())/NCPU, b.Max.X, b.Min.Y+(i+1)*(b.Dy())/NCPU), c)
 	}
 
 	for i := 0; i < NCPU; i++ {
